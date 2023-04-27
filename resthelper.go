@@ -7,29 +7,29 @@ import (
 )
 
 type HttpError struct {
-	err    error
-	status int
+	Err    error
+	Status int
 }
 
 func (e HttpError) Error() string {
-	return e.err.Error()
+	return e.Err.Error()
 }
 
 func (e HttpError) Unwrap() error {
-	return e.err
+	return e.Err
 }
 
 func NewHttpErr(status int, err error) *HttpError {
 	return &HttpError{
-		status: status,
-		err:    err,
+		Status: status,
+		Err:    err,
 	}
 }
 
 func NewHttpErrF(status int, format string, a ...any) *HttpError {
 	return &HttpError{
-		status: status,
-		err:    fmt.Errorf(format, a...),
+		Status: status,
+		Err:    fmt.Errorf(format, a...),
 	}
 }
 
@@ -40,7 +40,7 @@ func RestJsonWrapper[T any](toWrap func(*http.Request) (T, *HttpError), afterRes
 		writeCommonHeaders(w)
 		payload, err := toWrap(r)
 		if err != nil {
-			respondWithError(w, err.status, err.Error(), afterResponseHooks)
+			respondWithError(w, err.Status, err.Error(), afterResponseHooks)
 		} else {
 			response, _ := json.Marshal(payload)
 			w.Header().Set("Content-Type", "application/json")
@@ -58,7 +58,7 @@ func RestNoContentWrapper(toWrap func(*http.Request) *HttpError, afterResponseHo
 		writeCommonHeaders(w)
 		err := toWrap(r)
 		if err != nil {
-			respondWithError(w, err.status, err.Error(), afterResponseHooks)
+			respondWithError(w, err.Status, err.Error(), afterResponseHooks)
 		} else {
 			w.WriteHeader(http.StatusNoContent)
 			callAllHooks(afterResponseHooks, http.StatusNoContent)
