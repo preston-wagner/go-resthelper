@@ -1,3 +1,3 @@
-module github.com/preston-wagner/unicycle
+module github.com/preston-wagner/resthelper
 
 go 1.19
