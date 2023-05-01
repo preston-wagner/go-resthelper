@@ -10,20 +10,15 @@ import (
 	"github.com/preston-wagner/unicycle"
 )
 
-type testStruct struct {
-	Name  string
-	Count int
+func testNoResponseHandler(r *http.Request) *HttpError {
+	return nil
 }
 
-func testHandler(input testStruct) (testStruct, *HttpError) {
-	return input, nil
-}
-
-func TestMonitorCRUD(t *testing.T) {
+func TestNoContentWrapper(t *testing.T) {
 	router := mux.NewRouter()
 
-	testRoute := "/test/"
-	router.HandleFunc(testRoute, JsonResponseWrapper(JsonRequestWrapper(testHandler))).Methods("POST")
+	testRoute := "/no_response/"
+	router.HandleFunc(testRoute, NoContentWrapper(testNoResponseHandler)).Methods("GET")
 
 	const port = 9876
 	server := &http.Server{
@@ -41,19 +36,12 @@ func TestMonitorCRUD(t *testing.T) {
 
 	rootUrl := "http://localhost:" + strconv.Itoa(port)
 
-	original := testStruct{
-		Name:  "Steve",
-		Count: 7,
-	}
-	resp, err := unicycle.FetchJson[testStruct](rootUrl+testRoute, unicycle.FetchOptions{
-		Method: "POST",
-		Body:   unicycle.JsonToReader(original),
-	})
+	resp, err := unicycle.Fetch(rootUrl+testRoute, unicycle.FetchOptions{})
 	if err != nil {
 		t.Error(err)
 	}
-	if resp != original {
-		t.Error("struct did not survive round trip")
+	if resp.StatusCode != http.StatusNoContent {
+		t.Error("resp.StatusCode != http.StatusNoContent")
 	}
 
 	server.Close()

@@ -11,22 +11,17 @@ func writeCommonHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-func callAllHooks(hooks []func(int), statusCode int) {
-	for i := range hooks {
-		go hooks[i](statusCode)
-	}
-}
-
-func respondWithError(w http.ResponseWriter, code int, msg string, afterResponseHooks []func(int)) {
+func respondWithError(w http.ResponseWriter, httpErr *HttpError, postResponseHooks []postResponseHook) {
 	w.Header().Set("Content-Type", "text/plain")
-	w.WriteHeader(code)
-	w.Write([]byte(msg))
-	callAllHooks(afterResponseHooks, code)
+	w.WriteHeader(httpErr.Status)
+	w.Write([]byte(httpErr.Error()))
+	callPostResponseHooks(postResponseHooks, httpErr, httpErr.Status)
 }
 
-func recoverToErrorResponse(w http.ResponseWriter, afterResponseHooks []func(int)) {
+func recoverToErrorResponse(w http.ResponseWriter, postResponseHooks []postResponseHook) {
 	if r := recover(); r != nil {
-		fmt.Println("panicking goroutine recovered", r)
-		respondWithError(w, http.StatusInternalServerError, "panic", afterResponseHooks)
+		msg := "goroutine panic"
+		fmt.Println(msg, r)
+		respondWithError(w, NewHttpErrF(http.StatusInternalServerError, msg), postResponseHooks)
 	}
 }
