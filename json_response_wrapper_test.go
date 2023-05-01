@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/preston-wagner/unicycle"
+	"github.com/nuvi/unicycle"
 )
 
 type testJsonStruct struct {

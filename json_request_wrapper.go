@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/preston-wagner/unicycle"
+	"github.com/nuvi/unicycle"
 )
 
 func DecodeRequest[T any](r *http.Request) (T, *HttpError) {
