@@ -19,11 +19,18 @@ func testJsonHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
 	return input, nil
 }
 
+func testErrorHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
+	return input, NewHttpErrF(http.StatusNotFound, "not found")
+}
+
 func TestJsonResponseWrapper(t *testing.T) {
 	router := mux.NewRouter()
 
-	testRoute := "/json/"
-	router.HandleFunc(testRoute, JsonResponseWrapper(JsonRequestWrapper(testJsonHandler))).Methods("POST")
+	jsonRoute := "/json/"
+	router.HandleFunc(jsonRoute, JsonResponseWrapper(JsonRequestWrapper(testJsonHandler))).Methods("POST")
+
+	jsonErrorRoute := "/json_err/"
+	router.HandleFunc(jsonErrorRoute, JsonResponseWrapper(JsonRequestWrapper(testErrorHandler))).Methods("POST")
 
 	const port = 9876
 	server := &http.Server{
@@ -45,7 +52,7 @@ func TestJsonResponseWrapper(t *testing.T) {
 		Name:  "Steve",
 		Count: 7,
 	}
-	resp, err := unicycle.FetchJson[testJsonStruct](rootUrl+testRoute, unicycle.FetchOptions{
+	resp, err := unicycle.FetchJson[testJsonStruct](rootUrl+jsonRoute, unicycle.FetchOptions{
 		Method: "POST",
 		Body:   unicycle.JsonToReader(original),
 	})
@@ -54,6 +61,21 @@ func TestJsonResponseWrapper(t *testing.T) {
 	}
 	if resp != original {
 		t.Error("struct did not survive round trip")
+	}
+
+	_, err = unicycle.FetchJson[testJsonStruct](rootUrl+jsonErrorRoute, unicycle.FetchOptions{
+		Method: "POST",
+		Body:   unicycle.JsonToReader(original),
+	})
+	if err == nil {
+		t.Error("route should have returned an error")
+	}
+	if fetchErr := unicycle.ErrorAs[unicycle.FetchError](err); fetchErr != nil {
+		if fetchErr.Response.StatusCode != http.StatusNotFound {
+			t.Error("fetchErr.Response.StatusCode != http.StatusNotFound")
+		}
+	} else {
+		t.Error("Fetch should have returned a FetchError")
 	}
 
 	server.Close()

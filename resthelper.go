@@ -11,14 +11,14 @@ func writeCommonHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
 }
 
-func respondWithError(w http.ResponseWriter, httpErr *HttpError, postResponseHooks []postResponseHook) {
+func respondWithError(w http.ResponseWriter, httpErr *HttpError, postResponseHooks []PostResponseHook) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.WriteHeader(httpErr.Status)
 	w.Write([]byte(httpErr.Error()))
 	callPostResponseHooks(postResponseHooks, httpErr, httpErr.Status)
 }
 
-func recoverToErrorResponse(w http.ResponseWriter, postResponseHooks []postResponseHook) {
+func recoverToErrorResponse(w http.ResponseWriter, postResponseHooks []PostResponseHook) {
 	if r := recover(); r != nil {
 		msg := "goroutine panic"
 		fmt.Println(msg, r)

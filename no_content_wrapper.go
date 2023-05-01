@@ -8,16 +8,17 @@ type NoResponseHandler func(*http.Request) *HttpError
 
 // NoContentWrapper allows us to ensure at compile time that a route handler will always return either a 204 No Content response or an error code
 func NoContentWrapper(toWrap NoResponseHandler) func(http.ResponseWriter, *http.Request) {
-	return NoContentWrapperWithHooks([]preRequestHook{}, toWrap, []postResponseHook{})
+	return NoContentWrapperWithHooks([]PreRequestHook{}, toWrap, []PostResponseHook{})
 }
 
-func NoContentWrapperWithHooks(preRequestHooks []preRequestHook, toWrap NoResponseHandler, postResponseHooks []postResponseHook) func(http.ResponseWriter, *http.Request) {
+func NoContentWrapperWithHooks(preRequestHooks []PreRequestHook, toWrap NoResponseHandler, postResponseHooks []PostResponseHook) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		defer recoverToErrorResponse(w, postResponseHooks)
 		writeCommonHeaders(w)
 		err := callPreRequestHooks(preRequestHooks, r)
 		if err != nil {
 			respondWithError(w, err, postResponseHooks)
+			return
 		}
 		err = toWrap(r)
 		if err != nil {
