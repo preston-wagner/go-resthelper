@@ -15,11 +15,11 @@ type testJsonStruct struct {
 	Count int
 }
 
-func testJsonHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
+func testJsonHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
 	return input, nil
 }
 
-func testErrorHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
+func testErrorHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
 	return input, NewHttpErrF(http.StatusNotFound, "not found")
 }
 
