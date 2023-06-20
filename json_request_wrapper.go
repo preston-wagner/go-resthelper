@@ -7,6 +7,8 @@ import (
 	"github.com/nuvi/unicycle"
 )
 
+type JsonRequestHandler[REQUEST_TYPE any, RESPONSE_TYPE any] func(*http.Request, REQUEST_TYPE) (RESPONSE_TYPE, *HttpError)
+
 func DecodeRequest[T any](r *http.Request) (T, *HttpError) {
 	var req T
 	decoder := json.NewDecoder(r.Body)
@@ -17,7 +19,7 @@ func DecodeRequest[T any](r *http.Request) (T, *HttpError) {
 	return req, nil
 }
 
-func JsonRequestWrapper[REQUEST_TYPE any, RESPONSE_TYPE any](toWrap func(*http.Request, REQUEST_TYPE) (RESPONSE_TYPE, *HttpError)) func(*http.Request) (RESPONSE_TYPE, *HttpError) {
+func JsonRequestWrapper[REQUEST_TYPE any, RESPONSE_TYPE any](toWrap JsonRequestHandler[REQUEST_TYPE, RESPONSE_TYPE]) func(*http.Request) (RESPONSE_TYPE, *HttpError) {
 	return func(r *http.Request) (RESPONSE_TYPE, *HttpError) {
 		body, httpErr := DecodeRequest[REQUEST_TYPE](r)
 		if httpErr != nil {
