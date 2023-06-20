@@ -36,6 +36,7 @@ func JsonResponseWrapperWithHooks[T any](preRequestHooks []PreRequestHook, toWra
 	}
 }
 
+// JsonToJsonWrapper simplifies the common case where both the body of the request and the response should be json
 func JsonToJsonWrapper[REQUEST_TYPE any, RESPONSE_TYPE any](toWrap JsonRequestHandler[REQUEST_TYPE, RESPONSE_TYPE]) DefaultMuxHandler {
 	return JsonResponseWrapper(JsonRequestWrapper(toWrap))
 }
