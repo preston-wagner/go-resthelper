@@ -35,3 +35,7 @@ func JsonResponseWrapperWithHooks[T any](preRequestHooks []PreRequestHook, toWra
 		}
 	}
 }
+
+func JsonToJsonWrapper[REQUEST_TYPE any, RESPONSE_TYPE any](toWrap JsonRequestHandler[REQUEST_TYPE, RESPONSE_TYPE]) DefaultMuxHandler {
+	return JsonResponseWrapper(JsonRequestWrapper(toWrap))
+}
