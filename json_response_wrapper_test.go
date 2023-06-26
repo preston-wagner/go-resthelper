@@ -15,11 +15,11 @@ type testJsonStruct struct {
 	Count int
 }
 
-func testJsonHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
+func testJsonHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
 	return input, nil
 }
 
-func testErrorHandler(input testJsonStruct) (testJsonStruct, *HttpError) {
+func testErrorHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
 	return input, NewHttpErrF(http.StatusNotFound, "not found")
 }
 
@@ -67,16 +67,7 @@ func TestJsonResponseWrapper(t *testing.T) {
 		Method: "POST",
 		Body:   unicycle.JsonToReader(original),
 	})
-	if err == nil {
-		t.Error("route should have returned an error")
-	}
-	if fetchErr := unicycle.ErrorAs[unicycle.FetchError](err); fetchErr != nil {
-		if fetchErr.Response.StatusCode != http.StatusNotFound {
-			t.Error("fetchErr.Response.StatusCode != http.StatusNotFound")
-		}
-	} else {
-		t.Error("Fetch should have returned a FetchError")
-	}
+	AssertErrorStatusCode(t, http.StatusNotFound, err)
 
 	server.Close()
 	ok, err := serverRunPromise.Await()
