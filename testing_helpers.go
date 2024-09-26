@@ -4,17 +4,17 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/nuvi/unicycle"
+	"github.com/nuvi/unicycle/fetch"
 )
 
 func AssertErrorStatusCode(t *testing.T, statusCode int, err error) {
 	if err == nil {
 		t.Error("expected FetchError, got: nil")
 	} else {
-		var fetchErr unicycle.FetchError
+		var fetchErr fetch.FetchError
 		if errors.As(err, &fetchErr) {
 			if fetchErr.Response.StatusCode != statusCode {
-				unicycle.LogPossibleFetchError(fetchErr)
+				fetch.LogPossibleFetchError(fetchErr)
 				t.Error("expected status code", statusCode, "in FetchError, got", fetchErr.Response.StatusCode)
 			}
 		} else {

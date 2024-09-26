@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/nuvi/unicycle"
+	"github.com/nuvi/unicycle/defaults"
 )
 
 type JsonRequestHandler[REQUEST_TYPE any, RESPONSE_TYPE any] func(*http.Request, REQUEST_TYPE) (RESPONSE_TYPE, *HttpError)
@@ -23,7 +23,7 @@ func JsonRequestWrapper[REQUEST_TYPE any, RESPONSE_TYPE any](toWrap JsonRequestH
 	return func(r *http.Request) (RESPONSE_TYPE, *HttpError) {
 		body, httpErr := DecodeRequest[REQUEST_TYPE](r)
 		if httpErr != nil {
-			return unicycle.ZeroValue[RESPONSE_TYPE](), httpErr
+			return defaults.ZeroValue[RESPONSE_TYPE](), httpErr
 		}
 		return toWrap(r, body)
 	}

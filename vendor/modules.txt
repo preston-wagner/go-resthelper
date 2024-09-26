@@ -1,6 +1,13 @@
 # github.com/gorilla/mux v1.8.0
 ## explicit; go 1.12
 github.com/gorilla/mux
-# github.com/nuvi/unicycle v0.2.0
-## explicit; go 1.19
-github.com/nuvi/unicycle
+# github.com/nuvi/unicycle v0.9.1
+## explicit; go 1.22.2
+github.com/nuvi/unicycle/defaults
+github.com/nuvi/unicycle/error_ext
+github.com/nuvi/unicycle/fetch
+github.com/nuvi/unicycle/maps
+github.com/nuvi/unicycle/promises
+github.com/nuvi/unicycle/sets
+github.com/nuvi/unicycle/slices
+github.com/nuvi/unicycle/types_ext

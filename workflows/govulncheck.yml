@@ -1,0 +1,33 @@
+name: govulncheck
+
+on:
+  pull_request:
+    branches: [main, prod]
+
+jobs:
+  test:
+    name: govulncheck
+    runs-on: ubuntu-latest
+    env:
+      GOPROXY: "https://proxy.golang.org,direct"
+
+    steps:
+      - name: Set up Go 1.22.5
+        uses: actions/setup-go@v2
+        with:
+          go-version: '1.22.5'
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v1
+
+      - name: install govulncheck
+        run: |
+          export PATH=$PATH:$(go env GOPATH)/bin
+          go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: make vuln
+        env:
+          GOFLAGS: -mod=vendor
+        run: |
+          make vuln

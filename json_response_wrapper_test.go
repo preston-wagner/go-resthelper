@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/nuvi/unicycle"
+	"github.com/nuvi/unicycle/fetch"
+	"github.com/nuvi/unicycle/promises"
 )
 
 type testJsonStruct struct {
@@ -41,7 +42,7 @@ func TestJsonResponseWrapper(t *testing.T) {
 		Handler:      router,
 	}
 	defer server.Close()
-	serverRunPromise := unicycle.WrapInPromise(func() (bool, error) {
+	serverRunPromise := promises.WrapInPromise(func() (bool, error) {
 		err := server.ListenAndServe()
 		return err == http.ErrServerClosed, err
 	})
@@ -52,9 +53,9 @@ func TestJsonResponseWrapper(t *testing.T) {
 		Name:  "Steve",
 		Count: 7,
 	}
-	resp, err := unicycle.FetchJson[testJsonStruct](rootUrl+jsonRoute, unicycle.FetchOptions{
+	resp, err := fetch.FetchJson[testJsonStruct](rootUrl+jsonRoute, fetch.FetchOptions{
 		Method: "POST",
-		Body:   unicycle.JsonToReader(original),
+		Body:   fetch.JsonToReader(original),
 	})
 	if err != nil {
 		t.Error(err)
@@ -63,9 +64,9 @@ func TestJsonResponseWrapper(t *testing.T) {
 		t.Error("struct did not survive round trip")
 	}
 
-	_, err = unicycle.FetchJson[testJsonStruct](rootUrl+jsonErrorRoute, unicycle.FetchOptions{
+	_, err = fetch.FetchJson[testJsonStruct](rootUrl+jsonErrorRoute, fetch.FetchOptions{
 		Method: "POST",
-		Body:   unicycle.JsonToReader(original),
+		Body:   fetch.JsonToReader(original),
 	})
 	AssertErrorStatusCode(t, http.StatusNotFound, err)
 
