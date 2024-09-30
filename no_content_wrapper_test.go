@@ -1,4 +1,4 @@
-package resthelper
+package resthelper_test
 
 import (
 	"net/http"
@@ -7,31 +7,32 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/nuvi/go-resthelper"
 	"github.com/nuvi/unicycle/fetch"
 	"github.com/nuvi/unicycle/promises"
 )
 
-func testNoResponseHandler(r *http.Request) *HttpError {
+func testNoResponseHandler(r *http.Request) *resthelper.HttpError {
 	return nil
 }
 
-func unauthorizedHook(r *http.Request) *HttpError {
-	return NewHttpErrF(http.StatusUnauthorized, "unauthorized")
+func unauthorizedHook(r *http.Request) *resthelper.HttpError {
+	return resthelper.NewHttpErrF(http.StatusUnauthorized, "unauthorized")
 }
 
 func TestNoContentWrapper(t *testing.T) {
 	router := mux.NewRouter()
 
 	hookCalled := false
-	postHook := func(*HttpError, int) {
+	postHook := func(*resthelper.HttpError, int) {
 		hookCalled = true
 	}
 
 	noResponseRoute := "/no_response/"
-	router.HandleFunc(noResponseRoute, NoContentWrapper(testNoResponseHandler)).Methods("GET")
+	router.HandleFunc(noResponseRoute, resthelper.NoContentWrapper(testNoResponseHandler)).Methods("GET")
 
 	unauthorizedRoute := "/unauthorized/"
-	router.HandleFunc(unauthorizedRoute, NoContentWrapperWithHooks([]PreRequestHook{unauthorizedHook}, testNoResponseHandler, []PostResponseHook{postHook})).Methods("GET")
+	router.HandleFunc(unauthorizedRoute, resthelper.NoContentWrapperWithHooks([]resthelper.PreRequestHook{unauthorizedHook}, testNoResponseHandler, []resthelper.PostResponseHook{postHook})).Methods("GET")
 
 	const port = 9876
 	server := &http.Server{

@@ -1,4 +1,4 @@
-package resthelper
+package resthelper_test
 
 import (
 	"net/http"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/nuvi/go-resthelper"
 	"github.com/nuvi/unicycle/fetch"
 	"github.com/nuvi/unicycle/promises"
 )
@@ -16,22 +17,22 @@ type testJsonStruct struct {
 	Count int
 }
 
-func testJsonHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
+func testJsonHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *resthelper.HttpError) {
 	return input, nil
 }
 
-func testErrorHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *HttpError) {
-	return input, NewHttpErrF(http.StatusNotFound, "not found")
+func testErrorHandler(r *http.Request, input testJsonStruct) (testJsonStruct, *resthelper.HttpError) {
+	return input, resthelper.NewHttpErrF(http.StatusNotFound, "not found")
 }
 
 func TestJsonResponseWrapper(t *testing.T) {
 	router := mux.NewRouter()
 
 	jsonRoute := "/json/"
-	router.HandleFunc(jsonRoute, JsonResponseWrapper(JsonRequestWrapper(testJsonHandler))).Methods("POST")
+	router.HandleFunc(jsonRoute, resthelper.JsonResponseWrapper(resthelper.JsonRequestWrapper(testJsonHandler))).Methods("POST")
 
 	jsonErrorRoute := "/json_err/"
-	router.HandleFunc(jsonErrorRoute, JsonResponseWrapper(JsonRequestWrapper(testErrorHandler))).Methods("POST")
+	router.HandleFunc(jsonErrorRoute, resthelper.JsonResponseWrapper(resthelper.JsonRequestWrapper(testErrorHandler))).Methods("POST")
 
 	const port = 9876
 	server := &http.Server{
@@ -68,7 +69,7 @@ func TestJsonResponseWrapper(t *testing.T) {
 		Method: "POST",
 		Body:   fetch.JsonToReader(original),
 	})
-	AssertErrorStatusCode(t, http.StatusNotFound, err)
+	resthelper.AssertErrorStatusCode(t, http.StatusNotFound, err)
 
 	server.Close()
 	ok, err := serverRunPromise.Await()
