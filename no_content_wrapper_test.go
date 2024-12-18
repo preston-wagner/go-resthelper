@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/preston-wagner/unicycle"
+	"github.com/preston-wagner/unicycle/fetch"
+	"github.com/preston-wagner/unicycle/promises"
 )
 
 func testNoResponseHandler(r *http.Request) *HttpError {
@@ -41,14 +42,14 @@ func TestNoContentWrapper(t *testing.T) {
 		Handler:      router,
 	}
 	defer server.Close()
-	serverRunPromise := unicycle.WrapInPromise(func() (bool, error) {
+	serverRunPromise := promises.WrapInPromise(func() (bool, error) {
 		err := server.ListenAndServe()
 		return err == http.ErrServerClosed, err
 	})
 
 	rootUrl := "http://localhost:" + strconv.Itoa(port)
 
-	resp, err := unicycle.Fetch(rootUrl+noResponseRoute, unicycle.FetchOptions{})
+	resp, err := fetch.Fetch(rootUrl+noResponseRoute, fetch.FetchOptions{})
 	if err != nil {
 		t.Error(err)
 	}
@@ -56,7 +57,7 @@ func TestNoContentWrapper(t *testing.T) {
 		t.Error("resp.StatusCode != http.StatusNoContent")
 	}
 
-	resp, err = unicycle.Fetch(rootUrl+unauthorizedRoute, unicycle.FetchOptions{})
+	resp, err = fetch.Fetch(rootUrl+unauthorizedRoute, fetch.FetchOptions{})
 	if err != nil {
 		t.Error(err)
 	}

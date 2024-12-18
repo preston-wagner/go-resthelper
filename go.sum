@@ -1,4 +1,6 @@
 github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
 github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
-github.com/preston-wagner/unicycle v0.2.0 h1:o1Hq8MboGx1hpsX5f7FOpu5GYVYUs6wwFR2QIKqOyy0=
-github.com/preston-wagner/unicycle v0.2.0/go.mod h1:qBiBms5StwNI2Y8H9Fb7E+/n0ZWk45SjKHU2Vrv92qA=
+github.com/preston-wagner/unicycle v0.10.0 h1:Uv+wk/7vPZGesZIDQP5UbY5MP4kuM4iLC3Uf0tsX//g=
+github.com/preston-wagner/unicycle v0.10.0/go.mod h1:xfTS2DkHmiDAHKHnLc5BnCc9MUsRtEGBnvllPaQ2ZvM=
+golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c h1:7dEasQXItcW1xKJ2+gg5VOiBnqWrJc+rq0DPKyvvdbY=
+golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c/go.mod h1:NQtJDoLvd6faHhE7m4T/1IY708gDefGGjR/iUW8yQQ8=

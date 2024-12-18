@@ -1,6 +1,18 @@
 # github.com/gorilla/mux v1.8.0
 ## explicit; go 1.12
 github.com/gorilla/mux
-# github.com/preston-wagner/unicycle v0.2.0
-## explicit; go 1.19
-github.com/preston-wagner/unicycle
+# github.com/preston-wagner/unicycle v0.10.0
+## explicit; go 1.23.2
+github.com/preston-wagner/unicycle/defaults
+github.com/preston-wagner/unicycle/error_ext
+github.com/preston-wagner/unicycle/fetch
+github.com/preston-wagner/unicycle/json_ext
+github.com/preston-wagner/unicycle/maps
+github.com/preston-wagner/unicycle/promises
+github.com/preston-wagner/unicycle/sets
+github.com/preston-wagner/unicycle/slices_ext
+github.com/preston-wagner/unicycle/string_ext
+github.com/preston-wagner/unicycle/types_ext
+# golang.org/x/exp v0.0.0-20241009180824-f66d83c29e7c
+## explicit; go 1.22.0
+golang.org/x/exp/constraints
