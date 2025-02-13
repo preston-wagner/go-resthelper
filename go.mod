@@ -1,8 +1,6 @@
 module github.com/preston-wagner/go-resthelper
 
-go 1.23.2
-
-toolchain go1.23.3
+go 1.23.6
 
 require (
 	github.com/gorilla/mux v1.8.0
